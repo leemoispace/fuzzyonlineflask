@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "flaskvenv/bin/python",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
+}
