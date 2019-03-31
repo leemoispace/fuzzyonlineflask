@@ -1,13 +1,28 @@
-<!DOCTYPE html>
-<html>
-<body>
-
-<!-- <button type="button" onclick="alert('Hello world!')">fuzzy match!</button> -->
+{% extends "index.html" %}
 
 
-<a href="http://你的路径/filename.xls">下载</a>
+{% block body %}
+
+<form action="process" method="post">
+
+		<textarea rows="20" cols="50" name="from">
+	数据工程师
+	数据挖掘工程师
+	大数据开发工程师
+	机器学习工程师
+	数据科学家
+		</textarea>
+	
+		<textarea rows="20" cols="50" name="standard">
+	数据挖掘
+	算法工程师
+		</textarea>
+	
+		<input type="submit" value="Start match and download">
+	
+	</form>
 
 
+    <input type="button" value="download" onclick="window.location.href='download'">
 
-</body>
-</html>
+{% endblock %}
