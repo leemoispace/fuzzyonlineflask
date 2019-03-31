@@ -1,26 +1,5 @@
 
-{% extends "bootstrap/base.html" %}
-{% block title %}Fuzzy match{% endblock %}
-{% block navbar %}
-<div class="navbar navbar-inverse" role="navigation">
-	<div class="container">
-		<div class="navbar-header">
-			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-				<span class="sr-only">Toggle navigation</span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			</button>
-			<a class="navbar-brand" href="/">Fuzzy match</a>
-		</div>
-		<div class="navbar-collapse collapse">
-			<ul class="nav navbar-nav">
-				<!-- <li><a href="/">Home</a></li> -->
-			</ul>
-		</div>
-	</div>
-</div>
-{% endblock %}
+{% extends "base.html" %}
 
 {% block content %}
 <div class="container">
@@ -31,27 +10,31 @@
 	</div>
 </div>
 
-
 <div class="container">
 <form action="process" method="post" id="form1">
 
 		<textarea rows="20" cols="50" name="from" style="resize:none" >
+{% block leftli %}
 数据工程师
 数据挖掘工程师
 大数据开发工程师
 机器学习工程师
-数据科学家</textarea>
-	
+数据科学家{% endblock %}
+</textarea>
+
 		<textarea rows="20" cols="50" name="standard" style="resize:none">
+{% block rightli %}
 数据挖掘
-算法工程师</textarea>
+算法工程师{% endblock %}
+</textarea>
 </form>
+
 <br>
 <input type="submit" value="Start match!" form="form1">
 
-
 {% block contentin %}
 {% endblock %}
+
 
 </div>
 

@@ -18,23 +18,33 @@ bootstrap = Bootstrap(app)
 @app.route('/')
 def index():
     #return redirect('http://youtube.com')
+
     return render_template('index.html')
 
 @app.route('/user/<name>')#动态路由获得参数例子
 def user(name):
     return render_template('user.html', name=name)
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'),404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
 
 @app.route('/process',methods=['GET','POST'] )
 def processing():
+    #resp.set_cookie('passwd', '123456') make response
+
     #string to list flask处理request的方法不一样
     leftl=request.form.get('from').split("\r\n")
     rightl=request.form.get('standard').split("\r\n")
     resultdic={}
     compare2list(leftl,rightl,resultdic)
  
-    #print(request.cookies)
-    #print(request.headers)
+    print(request.cookies)
+    print(request.headers)
 
     #生成excel
     wb = Workbook()
@@ -50,8 +60,10 @@ def processing():
     wb.save("donefiles/test.xlsx")
 
     #下载后删除 hook
-    #返回处理后的结果
-    return render_template('results.html')
+
+    #返回处理后的结果 ，更新form显示
+    return render_template('results.html',leftl=leftl,rightl=rightl)
+
     #todo 多个extract
 
 
@@ -59,6 +71,10 @@ def processing():
 def download():
     filename="test.xlsx"
     if os.path.isfile(os.path.join('donefiles/', filename)):
-        # 需要知道2个参数, 第1个参数是本地目录的path, 第2个参数是文件名(带扩展名)
-        directory = os.path.join(os.getcwd(),'donefiles/') 
-        return send_from_directory(directory,filename,as_attachment=True)
+        # # 需要知道2个参数, 第1个参数是本地目录的path, 第2个参数是文件名(带扩展名)
+        # directory = os.path.join(os.getcwd(),'donefiles/')
+        # print(directory,filename)
+        # return send_from_directory(directory,filename,as_attachment=True)
+        
+        #return send_file("donefiles/test.xlsx",cache_timeout=-1)
+        return app.send_static_file("donefiles/test.xlsx")
