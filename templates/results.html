@@ -1,28 +1,9 @@
 {% extends "index.html" %}
 
-
-{% block body %}
-
-<form action="process" method="post">
-
-		<textarea rows="20" cols="50" name="from">
-	数据工程师
-	数据挖掘工程师
-	大数据开发工程师
-	机器学习工程师
-	数据科学家
-		</textarea>
-	
-		<textarea rows="20" cols="50" name="standard">
-	数据挖掘
-	算法工程师
-		</textarea>
-	
-		<input type="submit" value="Start match and download">
-	
-	</form>
-
-
-    <input type="button" value="download" onclick="window.location.href='download'">
-
+{% block contentin %}
+<div>
+    <br>
+    <input type="button" value="Download result xlsx file! " onclick="window.location.href='download'">
+</div>   
 {% endblock %}
+

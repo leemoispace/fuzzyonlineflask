@@ -1,34 +1,58 @@
+
 {% extends "bootstrap/base.html" %}
 {% block title %}Fuzzy match{% endblock %}
-
-{% block head %}
-{{ super() }}
-<style>
-
-</style>
+{% block navbar %}
+<div class="navbar navbar-inverse" role="navigation">
+	<div class="container">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="/">Fuzzy match</a>
+		</div>
+		<div class="navbar-collapse collapse">
+			<ul class="nav navbar-nav">
+				<!-- <li><a href="/">Home</a></li> -->
+			</ul>
+		</div>
+	</div>
+</div>
 {% endblock %}
 
-{% block body %}
+{% block content %}
+<div class="container">
+	<div class="page-header">
+		<li>Paste 2 columns copied from excel.</li>
+		<li>Left column will be fuzzy matched by the content from right column according to similarity.</li>
+		<li>then you can download the result excel file.</li>
+	</div>
+</div>
 
-<form action="process" method="post">
 
-		<textarea rows="20" cols="50" name="from">
-	数据工程师
-	数据挖掘工程师
-	大数据开发工程师
-	机器学习工程师
-	数据科学家
-		</textarea>
+<div class="container">
+<form action="process" method="post" id="form1">
+
+		<textarea rows="20" cols="50" name="from" style="resize:none" >
+数据工程师
+数据挖掘工程师
+大数据开发工程师
+机器学习工程师
+数据科学家</textarea>
 	
-		<textarea rows="20" cols="50" name="standard">
-	数据挖掘
-	算法工程师
-		</textarea>
-	
-		<input type="submit" value="Start match and download">
-	
-	</form>
+		<textarea rows="20" cols="50" name="standard" style="resize:none">
+数据挖掘
+算法工程师</textarea>
+</form>
+<br>
+<input type="submit" value="Start match!" form="form1">
 
 
+{% block contentin %}
 {% endblock %}
 
+</div>
+
+{% endblock %}
