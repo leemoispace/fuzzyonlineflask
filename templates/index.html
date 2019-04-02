@@ -1,5 +1,6 @@
 
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 {% block content %}
 <div class="container">
@@ -7,13 +8,15 @@
 		<li>Paste 2 columns copied from excel.</li>
 		<li>Left column will be fuzzy matched by the content from right column according to similarity.</li>
 		<li>then you can download the result excel file.</li>
+
 	</div>
 </div>
 
 <div class="container">
+<!-- 	
 <form action="process" method="post" id="form1">
 
-		<textarea rows="20" cols="50" name="from" style="resize:none" >
+		<textarea rows="20" cols="50" name="leftl" style="resize:none" >
 {% block leftli %}
 数据工程师
 数据挖掘工程师
@@ -22,20 +25,26 @@
 数据科学家{% endblock %}
 </textarea>
 
-		<textarea rows="20" cols="50" name="standard" style="resize:none">
+		<textarea rows="20" cols="50" name="rightl" style="resize:none">
 {% block rightli %}
 数据挖掘
 算法工程师{% endblock %}
 </textarea>
-</form>
+
+
+
+</form> 
 
 <br>
-<input type="submit" value="Start match!" form="form1">
+<input type="submit" value="Start match!" form="form1"> -->
+
+
+
+{{ wtf.quick_form(form,action="process",method="POST") }}
 
 {% block contentin %}
 {% endblock %}
 
 </div>
-
 
 {% endblock %}

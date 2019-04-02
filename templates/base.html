@@ -14,7 +14,7 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <!-- <li><a href="/">Home</a></li> -->
+                    <li><a href="/about">about</a></li>
                 </ul>
             </div>
         </div>
@@ -24,4 +24,13 @@
 <div class="container">
     {% block page_content %}{% endblock %}
 </div>
+{% endblock %}
+
+
+{% block head %}
+{{ super() }} 
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}"
+type="image/x-icon">
+<link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}"
+type="image/x-icon">
 {% endblock %}
