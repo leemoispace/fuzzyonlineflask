@@ -8,7 +8,7 @@ from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms import TextAreaField, SubmitField
 from wtforms.fields.html5 import EmailField
-
+from threading import Thread
 from wtforms.validators import DataRequired,InputRequired,Email
 # Flask 用这个参数确定应用的位置，进而找到应用中其他文件的位置，例如图像和模板。
 app = Flask(__name__)
@@ -40,28 +40,40 @@ app.config['SECRET_KEY'] = 'fuzzyflask' #表单类使用为了增强安全性，
 
 #邮件
 from flask_mail import Mail
+
 app.config.update(dict(
     DEBUG = True,
-    MAIL_SERVER = 'smtp.gmail.com',
-    MAIL_PORT = 587,
-    MAIL_USE_TLS = True,
-    MAIL_USE_SSL = False,
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME'),
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD'),
+    MAIL_SERVER = 'smtp.qq.com',#'smtp.gmail.com',
+    MAIL_PORT = '465',#
+    MAIL_USE_TLS = False,#587
+    MAIL_USE_SSL = True,#465
+    MAIL_USERNAME = '1274543351@qq.com',#os.environ.get('MAIL_USERNAME'),
+    MAIL_PASSWORD = 'lvjgwyfpbzatgibc',# os.environ.get('MAIL_PASSWORD') export MAIL_PASSWORD=
+    MAIL_DEFAULT_SENDER	= '1274543351@qq.com',
 ))
-mail = Mail(app)
+
+mail = Mail(app)#connection refused
 
 from flask_mail import Message
 app.config['FLASKY_MAIL_SUBJECT_PREFIX'] = '[matchfuzzydata]'
-app.config['FLASKY_MAIL_SENDER'] = 'matchfuzzydata <matchfuzzydata@gmail.com>'
+app.config['FLASKY_MAIL_SENDER'] = 'matchfuzzydata <1274543351@qq.com>'
 
+#send_email() 函数的参数分别为收件人地址、主题、渲染邮件正文的模板和关键字参数列表。
+# 调用者传入的关键字参数将传给 render_template() 函数，作为模板变量提供给
+# 模板使用，用于生成电子邮件正文。 todo我们可以把执行 send_async_email() 函数的操作发给 Celery 任务队列。
 def send_email(to, subject, template, **kwargs):
     msg = Message(app.config['FLASKY_MAIL_SUBJECT_PREFIX'] + subject,sender=app.config['FLASKY_MAIL_SENDER'], recipients=[to])
     msg.body = render_template(template + '.txt', **kwargs)
     msg.html = render_template(template + '.html', **kwargs)
-    mail.send(msg)
+    with app.open_resource("donefiles/"+to+".xlsx") as fp:
+        msg.attach("donefiles/"+to+".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fp.read())
+    thr = Thread(target=send_async_email, args=[app, msg])
+    thr.start()
+    return thr
 
-
+def send_async_email(app, msg):
+    with app.app_context():
+        mail.send(msg)
 
 
 #@app.route('/')
@@ -128,14 +140,17 @@ def process():
         print("first wechat payment part")
         sendfile(address)
         #todo 付款环节
-        
+
     #返回处理后的结果 ，更新form显示
     return render_template('results.html',form=form,leftl=leftl,rightl=rightl)
 
 def sendfile(address):
     print("file sending ")
-    #发送邮件 todo
+    #发送邮件 todo send_email() 函数的参数分别为收件人地址、主题、渲染邮件正文的模板和关键字参数列表。
+    #这里发给自己测试
+    send_email('leemoispace@gmail.com', 'fuzzy match done!','mail/filedone', user=user)
     #多线程，高并发
+
 
     print("file sent to "+address)
     os.remove("donefiles/"+address+".xlsx")
