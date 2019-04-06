@@ -11,23 +11,19 @@ from threading import Thread
 from wtforms.validators import DataRequired,InputRequired,Email
 # Flask 用这个参数确定应用的位置，进而找到应用中其他文件的位置，例如图像和模板。
 #fuzzywuzzy
-from fuzzywuzzy import process,fuzz#from .fuzzycompare import compare2list
-
-
+from fuzzywuzzy import process as fuzzyprocess,fuzz 
+#from .fuzzycompare import compare2list
 
 app = Flask(__name__)
-
-if __name__ == '__main__':
-    app.run()
 
 #fuzzywuzzy
 def compare2list(leftl,rightl,resultdict):
     '''
     2 list, using right one to match left one 
     '''
-    #这里如果用dict则不能重复，需要解决
     for item in range(len(leftl)):
-        resultdict[item]=[leftl[item],process.extractOne(leftl[item], rightl,scorer=fuzz.token_sort_ratio)]
+        resultdict[item]=[leftl[item],fuzzyprocess.extractOne(leftl[item], rightl,scorer=fuzz.token_sort_ratio)]
+
 
 #数据库
 from flask_sqlalchemy import SQLAlchemy
@@ -202,3 +198,8 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template('500.html'), 500
+
+
+
+if __name__ == '__main__':
+    app.run()
