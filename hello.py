@@ -1,3 +1,5 @@
+#-*- coding: UTF-8 -*- 
+
 from flask import Flask,render_template,request,redirect,session,url_for
 from flask import send_file, send_from_directory,app
 from .fuzzycompare import compare2list
@@ -13,6 +15,8 @@ from wtforms.validators import DataRequired,InputRequired,Email
 # Flask 用这个参数确定应用的位置，进而找到应用中其他文件的位置，例如图像和模板。
 app = Flask(__name__)
 
+if __name__ == '__main__':
+    app.run()
 
 
 #数据库
