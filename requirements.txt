@@ -2,9 +2,6 @@ absl-py==0.7.0
 alabaster==0.7.12
 alembic==1.0.8
 amqp==1.4.9
-anaconda-client==1.7.2
-anaconda-navigator==1.9.6
-anaconda-project==0.8.2
 anyjson==0.3.3
 appnope==0.1.0
 appscript==1.0.1
