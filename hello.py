@@ -1,8 +1,6 @@
 #-*- coding: UTF-8 -*- 
-
 from flask import Flask,render_template,request,redirect,session,url_for
 from flask import send_file, send_from_directory,app
-import openpyxl
 from openpyxl import Workbook
 import sys, os
 from flask_bootstrap import Bootstrap
