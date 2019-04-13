@@ -165,8 +165,8 @@ def process():
     #按客户邮箱命名文件
     filename=address+str(user.cnt)+".xlsx"
     wb.save("static/"+filename)
-    return render_template('results.html',form=form,leftl=leftl,rightl=rightl,email=email) \
-        and send_file("static/"+filename,
+    #return render_template('results.html',form=form,leftl=leftl,rightl=rightl,email=email) \
+    return send_file("static/"+filename,
                      mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                      attachment_filename=filename,
                      as_attachment=True)
