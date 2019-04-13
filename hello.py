@@ -75,8 +75,8 @@ def send_email(to, subject, template, **kwargs):
     msg = Message(app.config['FLASKY_MAIL_SUBJECT_PREFIX'] + subject,sender=app.config['FLASKY_MAIL_SENDER'], recipients=[to])
     msg.body = render_template(template + '.txt', **kwargs)
     msg.html = render_template(template + '.html', **kwargs)
-    with app.open_resource("donefiles/"+to+".xlsx") as fp:
-        msg.attach("donefiles/"+to+".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fp.read())
+    with app.open_resource("static/"+to+".xlsx") as fp:
+        msg.attach("static/"+to+".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fp.read())
     thr = Thread(target=send_async_email, args=[app, msg])
     thr.start()
     return thr
@@ -119,10 +119,10 @@ def process():
     wb = Workbook()
     ws = wb.active
     #表头
-    ws.cell(column=1 , row=1, value="order")
-    ws.cell(column=2 , row=1, value="nonstandard")
-    ws.cell(column=3 , row=1, value="standardized")
-    ws.cell(column=4 , row=1, value="similarity")
+    ws.cell(column=1 , row=1, value="顺序")
+    ws.cell(column=2 , row=1, value="非标准名称")
+    ws.cell(column=3 , row=1, value="标准名称")
+    ws.cell(column=4 , row=1, value="相似度")
     next_row=2
     #依次生成
     for (key,value) in resultdic.items():
@@ -131,8 +131,8 @@ def process():
         ws.cell(column=3 , row=next_row, value=value[1][0])
         ws.cell(column=4 , row=next_row, value=value[1][1])
         next_row += 1
-    #按客户邮箱命名文件
-    wb.save("donefiles/"+email+".xlsx")
+
+
     #邮件版本
     #数据库处理邮件地址，判断使用次数 3次
     address=form.email.data
@@ -162,9 +162,11 @@ def process():
         # downloadfile(address)
         #todo 付款环节
     #返回处理后的结果 ，更新form显示，处理结果已经生成，等待下载
-    filename=address+".xlsx"
+    #按客户邮箱命名文件
+    filename=address+str(user.cnt)+".xlsx"
+    wb.save("static/"+filename)
     return render_template('results.html',form=form,leftl=leftl,rightl=rightl,email=email) \
-        and send_file("donefiles/"+filename,
+        and send_file("static/"+filename,
                      mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                      attachment_filename=filename,
                      as_attachment=True)
