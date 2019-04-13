@@ -166,10 +166,12 @@ def process():
     filename=address+str(user.cnt)+".xlsx"
     wb.save("static/"+filename)
     #return render_template('results.html',form=form,leftl=leftl,rightl=rightl,email=email) \
-    return send_file("static/"+filename,
-                     mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                     attachment_filename=filename,
-                     as_attachment=True)
+    # return send_file("static/"+filename,
+    #                  mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    #                  attachment_filename=filename,
+    #                  as_attachment=True)
+    return send_from_directory("static/",filename, as_attachment=True)
+
 
 #快速生成bootstrap风格表单
 class NameForm(FlaskForm):
