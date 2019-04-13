@@ -9,14 +9,14 @@ from wtforms import TextAreaField, SubmitField
 from wtforms.fields.html5 import EmailField
 from threading import Thread
 from wtforms.validators import DataRequired,InputRequired,Email
-# Flask 用这个参数确定应用的位置，进而找到应用中其他文件的位置，例如图像和模板。
-#fuzzywuzzy
+#fuzzywuzzy 注意重名
+#from .fuzzycompare import compare2list 包引用重构时候再说
 from fuzzywuzzy import process as fuzzyprocess,fuzz 
-#from .fuzzycompare import compare2list
 
+# Flask 用这个参数确定应用的位置，进而找到应用中其他文件的位置，例如图像和模板。
 app = Flask(__name__)
 
-#fuzzywuzzy
+#using fuzzywuzzy
 def compare2list(leftl,rightl,resultdict):
     '''
     2 list, using right one to match left one 
@@ -86,40 +86,45 @@ def send_async_email(app, msg):
         mail.send(msg)
 
 
-#@app.route('/')
+#@app.route('/') 主页
 # 定义路由的最简便方式，是使用应用实例提供的app.route 装饰器
 @app.route('/',methods=['GET','POST'] )
 def index():
-    #return redirect('http://youtube.com')
-    form = NameForm()
-    if form.validate_on_submit(): #刷新不重复提交post,这里没啥用……s
+    form = NameForm()#表单模型初始化
+    if form.validate_on_submit(): #刷新不重复提交post,这里没啥用……
         session['leftl'] = form.leftl.data
         session['rightl'] = form.leftl.data
         return redirect(url_for('index'))
-    return render_template('index.html',form=form,leftl=session.get('leftl'),rightl=session.get('rightl'))
+    return render_template('index.html',form=form,leftl=session.get('leftl'), \
+        rightl=session.get('rightl'),email=session.get('email'),submit=session.get('submit'))
 
+
+#about页面
 @app.route('/about',methods=['GET','POST'] )
 def about():
     return render_template('about.html')
 
 
-
-#主程序
+#主程序，邮件版本
 @app.route('/process',methods=['GET','POST'] )
 def process():
     form = NameForm()
-    #resp.set_cookie('passwd', '123456') make response
     #string to list flask处理request的方法不一样
     leftl=request.form.get('leftl').split("\r\n")
     rightl=request.form.get('rightl').split("\r\n")
+    email=form.email.data
     resultdic={}
     compare2list(leftl,rightl,resultdic)
-    #print(request.cookies)
-    #print(request.headers)
     #生成excel
     wb = Workbook()
     ws = wb.active
-    next_row=1
+    #表头
+    ws.cell(column=1 , row=1, value="order")
+    ws.cell(column=2 , row=1, value="nonstandard")
+    ws.cell(column=3 , row=1, value="standardized")
+    ws.cell(column=4 , row=1, value="similarity")
+    next_row=2
+    #依次生成
     for (key,value) in resultdic.items():
         ws.cell(column=1 , row=next_row, value=key)
         ws.cell(column=2 , row=next_row, value=value[0])
@@ -127,64 +132,50 @@ def process():
         ws.cell(column=4 , row=next_row, value=value[1][1])
         next_row += 1
     #按客户邮箱命名文件
-    wb.save("donefiles/"+form.email.data+".xlsx")
-    #数据库处理邮件地址，判断使用次数3次
+    wb.save("donefiles/"+email+".xlsx")
+    #邮件版本
+    #数据库处理邮件地址，判断使用次数 3次
     address=form.email.data
-    user=User.query.filter_by(email=form.email.data).first()
+    print(address)
+    print(email)
+    user=User.query.filter_by(email=email).first()
     if user is None:#新客户
-        user=User(email=form.email.data)
+        user=User(email=email)
         db.session.add(user)
         user.cnt=1
         db.session.add(user)
         db.session.commit()
-        sendfile(address)
+        #sendfile(address)
+        # downloadfile(address)
     elif user.cnt<3:
         user.cnt+=1
         db.session.add(user)
         db.session.commit()
-        sendfile(address)
+        #sendfile(address)
+        # downloadfile(address)
     else:#超过3次,付费后send file
         user.cnt+=1
         db.session.add(user)
         db.session.commit()
         print("first wechat payment part")
-        sendfile(address)
+        #sendfile(address)
+        # downloadfile(address)
         #todo 付款环节
+    #返回处理后的结果 ，更新form显示，处理结果已经生成，等待下载
+    filename=address+".xlsx"
+    return render_template('results.html',form=form,leftl=leftl,rightl=rightl,email=email) \
+        and send_file("donefiles/"+filename,
+                     mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                     attachment_filename=filename,
+                     as_attachment=True)
 
-    #返回处理后的结果 ，更新form显示
-    return render_template('results.html',form=form,leftl=leftl,rightl=rightl)
-
-def sendfile(address):
-    print("file sending ")
-    #发送邮件 todo send_email() 函数的参数分别为收件人地址、主题、渲染邮件正文的模板和关键字参数列表。
-    #这里发给自己测试
-    send_email('leemoispace@gmail.com', 'fuzzy match done!','mail/filedone', user=user)
-    #多线程，高并发
-
-
-    print("file sent to "+address)
-    os.remove("donefiles/"+address+".xlsx")
-
-
-
-@app.route("/download", methods=['GET'])
-def download():
-    filename="test.xlsx"
-    if os.path.isfile(os.path.join('donefiles/', filename)):
-        # # 需要知道2个参数, 第1个参数是本地目录的path, 第2个参数是文件名(带扩展名)
-        # directory = os.path.join(os.getcwd(),'donefiles/')
-        # print(directory,filename)
-        # return send_from_directory(directory,filename,as_attachment=True)
-        
-        #return send_file("donefiles/test.xlsx",cache_timeout=-1)
-        return app.send_static_file("donefiles/test.xlsx")
-
-
+#快速生成bootstrap风格表单
 class NameForm(FlaskForm):
-    leftl = TextAreaField('paste the nonstandard data you want to match', validators=[DataRequired()])
-    rightl = TextAreaField('paste the standard data ', validators=[DataRequired()])
-    email = EmailField("Email address where match result file will be sent to.",  validators=[InputRequired("Please enter your email address"), Email("Please enter your email address.")])
-    submit = SubmitField('Start match and send result to me!')
+    leftl = TextAreaField('待匹配的非标准名称列', validators=[DataRequired()])
+    rightl = TextAreaField('用来匹配的标准名称列', validators=[DataRequired()])
+    email = EmailField("你的邮箱~",  validators=[InputRequired("Please enter your email address"), Email("Please enter your email address.")])
+    submit = SubmitField('发送匹配结果:)')
+    downloadfile=SubmitField('下载结果')
 
 
 @app.route('/user/<name>')#动态路由获得参数例子

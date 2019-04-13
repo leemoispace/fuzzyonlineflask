@@ -1,48 +1,40 @@
-
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block content %}
 <div class="container">
 	<div class="page-header">
-		<li>Paste 2 columns copied from excel.</li>
-		<li>Left column will be fuzzy matched by the content from right column according to similarity.</li>
-		<li>then you can download the result excel file.</li>
-
+		<li>请从excel中复制两列，分别粘贴到下面两个框中。</li>
+		<li>左边粘贴需要清洗的非标准名称列，右边粘贴你的标准化名称列。</li>
+		<li>匹配结果最后一列数字是相似度。</li>
 	</div>
 </div>
 
+
 <div class="container">
-<!-- 	
-<form action="process" method="post" id="form1">
 
-		<textarea rows="20" cols="50" name="leftl" style="resize:none" >
-{% block leftli %}
-数据工程师
-数据挖掘工程师
-大数据开发工程师
-机器学习工程师
-数据科学家{% endblock %}
-</textarea>
+<!-- 这里怎么一个表单两次不同提交终点？ action=""-->
+<form method="post" name="form1">
 
-		<textarea rows="20" cols="50" name="rightl" style="resize:none">
-{% block rightli %}
-数据挖掘
-算法工程师{% endblock %}
-</textarea>
+<div class="col-md-4">
+		{{wtf.form_field(form.leftl, class="form-control", placeholder="待清洗数据",rows="15",cols="50",style="resize:none") }}
+</div>
 
+<div class="col-md-4">
+		{{wtf.form_field(form.rightl, class="form-control", placeholder="标准数据",rows="15",cols="50",style="resize:none") }}
+</div>
 
+<div class="col-md-8">
+		{{wtf.form_field(form.email, class="form-control", placeholder="你的邮箱") }}
+</div>
 
+<div class="col-md-8">
+			{{wtf.form_field(form.submit,onclick="form1.action='process';form1.submit();") }}
+</div>
 </form> 
 
-<br>
-<input type="submit" value="Start match!" form="form1"> -->
 
-
-
-{{ wtf.quick_form(form,action="process",method="POST") }}
-
-{% block contentin %}
+{% block resultdownload %}
 {% endblock %}
 
 </div>
