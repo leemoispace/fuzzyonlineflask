@@ -170,7 +170,9 @@ def process():
     #                  mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     #                  attachment_filename=filename,
     #                  as_attachment=True)
-    return send_from_directory("static/",filename, as_attachment=True)
+    #return send_from_directory("static/",filename, as_attachment=True)
+    return app.send_static_file("static/"+filename)
+
 
 
 #快速生成bootstrap风格表单
