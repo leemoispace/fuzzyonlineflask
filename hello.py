@@ -132,12 +132,8 @@ def process():
         ws.cell(column=4 , row=next_row, value=value[1][1])
         next_row += 1
 
-
-    #邮件版本
     #数据库处理邮件地址，判断使用次数 3次
-    address=form.email.data
-    print(address)
-    print(email)
+    #print(email)
     user=User.query.filter_by(email=email).first()
     if user is None:#新客户
         user=User(email=email)
@@ -157,15 +153,17 @@ def process():
         user.cnt+=1
         db.session.add(user)
         db.session.commit()
-        print("first wechat payment part")
+        #print("first wechat payment part")
         #sendfile(address)
         # downloadfile(address)
         #todo 付款环节
     #返回处理后的结果 ，更新form显示，处理结果已经生成，等待下载
     #按客户邮箱命名文件
-    filename=address+str(user.cnt)+".xlsx"
+    filename=email+str(user.cnt)+".xlsx"
     wb.save("donefiles/"+filename)
-    #return render_template('results.html',form=form,leftl=leftl,rightl=rightl,email=email) \
+    print(url_for('process',_external=True)+'/'+filename)
+
+    #return render_template('results.html',form=form,leftl=leftl,rightl=rightl,email=email)
 
     #本地测试下载
     # return send_file("donefiles/"+filename,
@@ -173,9 +171,9 @@ def process():
     #                  attachment_filename=filename,
     #                  as_attachment=True)
 
-    #nginx在线返回 
+    #nginx在线返回静态附件url
     #url_for('user', name='john', _external=True) 的返回结果是 http://localhost:5000/user/john。
-    return redirect(url_for('process/'+filename,_external=True))
+    return redirect(url_for('process',_external=True)+'/'+filename)
 
 
 
