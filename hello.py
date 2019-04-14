@@ -166,12 +166,16 @@ def process():
     filename=address+str(user.cnt)+".xlsx"
     wb.save("static/"+filename)
     #return render_template('results.html',form=form,leftl=leftl,rightl=rightl,email=email) \
+
+    #本地测试下载
     # return send_file("static/"+filename,
     #                  mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     #                  attachment_filename=filename,
     #                  as_attachment=True)
-    #return send_from_directory("static/",filename, as_attachment=True)
-    return app.send_static_file("static/"+filename)
+
+    #nginx在线返回 
+    #url_for('user', name='john', _external=True) 的返回结果是 http://localhost:5000/user/john。
+    return url_for('process/'+filename,_external=True)
 
 
 
