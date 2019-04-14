@@ -165,21 +165,19 @@ def process():
     #按客户邮箱命名文件
     filename=email+str(user.cnt)+".xlsx"
     wb.save("donefiles/"+filename)
-    print(url_for('process',_external=True)+'/'+filename)
 
     #return render_template('results.html',form=form,leftl=leftl,rightl=rightl,email=email)
 
     #本地测试下载——最后直接用nginx了
-    # return send_file("donefiles/"+filename,
-    #                  mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    #                  attachment_filename=filename,
-    #                  as_attachment=True)
+    return send_file("donefiles/"+filename,
+                     mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                     attachment_filename=filename,
+                     as_attachment=True)
 
-    #nginx在线返回静态附件url
+    #nginx在线返回静态附件url——nginx post有点问题啊
+    #print(url_for('process',_external=True)+'/'+filename)
     #url_for('user', name='john', _external=True) 的返回结果是 http://localhost:5000/user/john
-    #return redirect("youtube.com")
-
-    return redirect(url_for('process',_external=True)+'/'+filename)
+    #return redirect(url_for('process',_external=True)+'/'+filename)
 
 
 
@@ -207,4 +205,4 @@ def internal_server_error(e):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run()
