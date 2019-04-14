@@ -164,18 +164,18 @@ def process():
     #返回处理后的结果 ，更新form显示，处理结果已经生成，等待下载
     #按客户邮箱命名文件
     filename=address+str(user.cnt)+".xlsx"
-    wb.save("static/"+filename)
+    wb.save("donefiles/"+filename)
     #return render_template('results.html',form=form,leftl=leftl,rightl=rightl,email=email) \
 
     #本地测试下载
-    # return send_file("static/"+filename,
+    # return send_file("donefiles/"+filename,
     #                  mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     #                  attachment_filename=filename,
     #                  as_attachment=True)
 
     #nginx在线返回 
     #url_for('user', name='john', _external=True) 的返回结果是 http://localhost:5000/user/john。
-    return url_for('process/'+filename,_external=True)
+    return redirect(url_for('process/'+filename,_external=True))
 
 
 
