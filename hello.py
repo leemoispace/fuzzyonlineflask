@@ -12,6 +12,8 @@ from wtforms.validators import DataRequired,InputRequired,Email
 #fuzzywuzzy 注意重名
 #from .fuzzycompare import compare2list 包引用重构时候再说
 from fuzzywuzzy import process as fuzzyprocess,fuzz 
+import logging
+
 
 # Flask 用这个参数确定应用的位置，进而找到应用中其他文件的位置，例如图像和模板。
 app = Flask(__name__)
@@ -95,6 +97,7 @@ def index():
         session['leftl'] = form.leftl.data
         session['rightl'] = form.leftl.data
         return redirect(url_for('index'))
+    print("show index")
     return render_template('index.html',form=form,leftl=session.get('leftl'), \
         rightl=session.get('rightl'),email=session.get('email'),submit=session.get('submit'))
 
@@ -165,14 +168,16 @@ def process():
 
     #return render_template('results.html',form=form,leftl=leftl,rightl=rightl,email=email)
 
-    #本地测试下载
+    #本地测试下载——最后直接用nginx了
     # return send_file("donefiles/"+filename,
     #                  mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     #                  attachment_filename=filename,
     #                  as_attachment=True)
 
     #nginx在线返回静态附件url
-    #url_for('user', name='john', _external=True) 的返回结果是 http://localhost:5000/user/john。
+    #url_for('user', name='john', _external=True) 的返回结果是 http://localhost:5000/user/john
+    #return redirect("youtube.com")
+
     return redirect(url_for('process',_external=True)+'/'+filename)
 
 
