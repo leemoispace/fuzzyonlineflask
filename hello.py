@@ -97,7 +97,7 @@ def index():
         session['leftl'] = form.leftl.data
         session['rightl'] = form.leftl.data
         return redirect(url_for('index'))
-    print("show index")
+    #print("show index")
     return render_template('index.html',form=form,leftl=session.get('leftl'), \
         rightl=session.get('rightl'),email=session.get('email'),submit=session.get('submit'))
 
@@ -111,6 +111,7 @@ def about():
 #主程序，邮件版本
 @app.route('/process',methods=['GET','POST'] )
 def process():
+    print("start process")
     form = NameForm()
     #string to list flask处理request的方法不一样
     leftl=request.form.get('leftl').split("\r\n")
